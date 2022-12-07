@@ -22,6 +22,7 @@ using NPOI.XSSF.Streaming;
 using MathNet.Numerics.Distributions;
 using NPOI.HPSF;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using NPOI.SS.Formula.Functions;
 
 namespace JM_CFDI
 {
@@ -29,6 +30,7 @@ namespace JM_CFDI
     {
         //string ConsultaSQLManagement;
         static string carpetaDocs;
+        private int filasTotales;
 
         public Form1()
         {
@@ -79,17 +81,14 @@ namespace JM_CFDI
                     panel_reporte.Visible = true;
                     tamañoForm(965, 430);
 
-                    List<string> filtroColumnas = lstcbxColumnas.GroupBy(x => x)
-                        .Where(g => g.Count() > 1)
-                        .Select(x => x.Key)
-                        .ToList();
+                    //List<string> filtroColumnas = lstcbxColumnas.GroupBy(x => x)
+                    //    .Where(g => g.Count() > 1)
+                    //    .Select(x => x.Key)
+                    //    .ToList();
+                    List<string> filtroColumnas = lstcbxColumnas.Distinct().ToList();
                     lstcbx_columnas.DataSource = filtroColumnas;
 
-                    //List<string> resultOK = cbxFiltro.Distinct().ToList();
-                    List<string> filtroFiltro = cbxFiltro.GroupBy(x => x)
-                        .Where(g => g.Count() > 1)
-                        .Select(x => x.Key)
-                        .ToList();
+                    List<string> filtroFiltro = cbxFiltro.Distinct().ToList();
                     cbx_filtro.DataSource = filtroFiltro; ;
                 }
                 else MessageBox.Show("Los documentos contenidos en esta carpeta no son compatibles. \n\nLos documentos deben de contar con la extencion \".XLSX\", es decir archivos tipo excel.", "Documentos no compatibles", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -122,9 +121,9 @@ namespace JM_CFDI
         }
         private bool obtieneDatos(string[] sArchivos, List<string> lst1, List<string> lst2, string tipo)
         {
+            filasTotales = 0;
             bool obtienedatos = false;
             int archs = 0;
-            progresBar(archs, sArchivos.Length);
             txt_progreso.Text = "";
 
             foreach (string rutaarchivo in sArchivos)
@@ -148,6 +147,8 @@ namespace JM_CFDI
 
                     if (hoja != null)
                     {
+                        int cantidadFilas = hoja.LastRowNum;
+
                         if (tipo == "columnas")
                         {
                             txt_progreso.Text = txt_progreso.Text + "--Obteniendo COLUMNAS." + "\r\n";
@@ -166,24 +167,13 @@ namespace JM_CFDI
                         if (tipo == "filtro")
                         {
                             string filtro = cbx_filtro.SelectedValue.ToString();
-                            int cantidadFilas = hoja.LastRowNum;
+                            //int cantidadFilas = hoja.LastRowNum;
                             int colFiltro = 0;
-                            bool existefiltro = false;
 
                             txt_progreso.Text = txt_progreso.Text + "--Obteniendo datos de \"" + filtro.ToUpper() + "\"\r\n";
 
-                            for (int i = 0; i <= 90; i++)
-                            {
-                                IRow fila = hoja.GetRow(0);
-                                string celda = fila.GetCell(i, MissingCellPolicy.RETURN_NULL_AND_BLANK) != null ? fila.GetCell(i, MissingCellPolicy.RETURN_NULL_AND_BLANK).ToString() : "";
-                                if (celda == filtro)
-                                {
-                                    colFiltro = i;
-                                    existefiltro= true;
-                                    break;
-                                }
-                            }
-                            if(existefiltro)
+                            colFiltro = numColumn(hoja, filtro);
+                            if (colFiltro != 16385)
                             {
                                 for (int i = 1; i <= cantidadFilas; i++)
                                 {
@@ -195,6 +185,8 @@ namespace JM_CFDI
                             }
                             else txt_progreso.Text = txt_progreso.Text + "--No se encontraron datos de \"" + filtro.ToUpper() + "\"\r\n";
                         }
+
+                        filasTotales = filasTotales + cantidadFilas;
                     }
                     MiExcel.Close();
                 }
@@ -223,14 +215,98 @@ namespace JM_CFDI
         }
         private void btn_reporte_Click(object sender, EventArgs e)
         {
+            if (lstcbx_descripciones.CheckedItems.Count != 0)
+            {
+                string palabraFiltro = cbx_filtro.Text;
 
-        }
+                List<string> lstDatosFiltro = new List<string>();                
+                for (int x = 0; x < lstcbx_descripciones.CheckedItems.Count; x++)
+                {
+                    lstDatosFiltro.Add(lstcbx_descripciones.CheckedItems[x].ToString());
+                }
 
-        private void tamañoForm(int ancho, int alto)
-        {
-            this.MinimumSize = new System.Drawing.Size(ancho, alto);
-            this.MaximumSize = new System.Drawing.Size(ancho, alto);
-            this.Size = new System.Drawing.Size(ancho, alto);
+                List<string> lstColumnasSelec = new List<string>();
+                foreach (DataGridViewColumn column in grd_columnas.Columns)
+                {
+                    lstColumnasSelec.Add(column.Name);
+                }
+
+                //DataTable dataTable = new DataTable();
+                //for (int i = 0; i < lstColumnasSelec.Count; i++)
+                //{
+                //    dataTable.Columns.Add(lstColumnasSelec[i].ToString());
+                //}
+                //dataTable.Rows.Add("","");
+
+                int columnas = lstColumnasSelec.Count;
+                string[,] cfdi = new string[filasTotales, columnas];
+
+                string[] sArchivos;
+                sArchivos = Directory.GetFiles(carpetaDocs);
+
+                int filasFinales = 0;
+
+                #region Abre hoja excel a trabajar
+                string rutaarchivo = sArchivos[0];
+
+                IWorkbook MiExcel = null;
+                FileStream fs = new FileStream(rutaarchivo, FileMode.Open, FileAccess.Read);
+
+                if (Path.GetExtension(rutaarchivo) == ".xlsx")
+                    MiExcel = new XSSFWorkbook(fs);
+                else
+                    MiExcel = new HSSFWorkbook(fs);
+
+                ISheet hoja = MiExcel.GetSheetAt(1);
+                #endregion
+                
+                int filas = hoja.LastRowNum;
+                List<int> numColumna = new List<int>();
+                for (int i = 0; i < lstColumnasSelec.Count; i++)
+                {
+                    numColumna.Add(numColumn(hoja, lstColumnasSelec[i]));
+                }
+                
+                int colFiltro = numColumn(hoja, palabraFiltro);
+                if (colFiltro != 16385) //si existe la columna para filtrar
+                {
+                    for (int i = 0; i < filas; i++) // eje y
+                    {
+                        bool datoAgregado = false;
+                        for (int j = 0; j < columnas; j++) // eje x
+                        {
+                            if (numColumna[j] != 16385) // si existe la columna de donde obtendra datos
+                            {
+                                IRow fila = hoja.GetRow(i);
+                                string celdaFiltro = fila.GetCell(colFiltro, MissingCellPolicy.RETURN_NULL_AND_BLANK) != null ? fila.GetCell(colFiltro, MissingCellPolicy.RETURN_NULL_AND_BLANK).ToString() : "";
+
+                                for(int k=0;k< lstDatosFiltro.Count; k++) // recorre lista de datos que se buscan dentro de la columna a filtrar
+                                {
+                                    if (celdaFiltro == lstDatosFiltro[k])
+                                    {
+                                        string celda = fila.GetCell(numColumna[j], MissingCellPolicy.RETURN_NULL_AND_BLANK) != null ? fila.GetCell(numColumna[j], MissingCellPolicy.RETURN_NULL_AND_BLANK).ToString() : "";
+
+                                        cfdi[filasFinales, j] = celda;
+                                        datoAgregado = true;
+                                    }
+                                }
+                            }
+                            //else cfdi[i, j] = "";
+                        }
+                        if (datoAgregado) filasFinales++;
+                    }
+                }
+
+                MiExcel.Close();
+
+                //convertir array cfdi - datatable
+                //guardar el datatable en un excel
+
+
+
+                grd_columnas.DataSource = cfdi;
+            }
+            else MessageBox.Show("Favor de selcionar por lo menos un elemento de la lista filtro");
         }
 
         private void lstcbx_columnas_SelectedValueChanged(object sender, EventArgs e)
@@ -262,6 +338,30 @@ namespace JM_CFDI
         private void progresBar(int prog, int total)
         {
             barra_progreso.Value = (prog * 100) / total;
+        }
+
+        private void tamañoForm(int ancho, int alto)
+        {
+            this.MinimumSize = new System.Drawing.Size(ancho, alto);
+            this.MaximumSize = new System.Drawing.Size(ancho, alto);
+            this.Size = new System.Drawing.Size(ancho, alto);
+        }
+
+        private int numColumn(ISheet hoja, string filtro)
+        {
+            int numColumna = 16385;
+            for (int i = 0; i <= 90; i++)
+            {
+                IRow fila = hoja.GetRow(0);
+                string celda = fila.GetCell(i, MissingCellPolicy.RETURN_NULL_AND_BLANK) != null ? fila.GetCell(i, MissingCellPolicy.RETURN_NULL_AND_BLANK).ToString() : "";
+                if (celda == filtro)
+                {
+                    numColumna = i;
+                    break;
+                }
+            }
+            
+            return numColumna;
         }
     }
 }
