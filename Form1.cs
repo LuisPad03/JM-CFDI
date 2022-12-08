@@ -231,20 +231,15 @@ namespace JM_CFDI
                     lstColumnasSelec.Add(column.Name);
                 }
 
-                //DataTable dataTable = new DataTable();
-                //for (int i = 0; i < lstColumnasSelec.Count; i++)
-                //{
-                //    dataTable.Columns.Add(lstColumnasSelec[i].ToString());
-                //}
-                //dataTable.Rows.Add("","");
-
                 int columnas = lstColumnasSelec.Count;
                 string[,] cfdi = new string[filasTotales, columnas];
 
                 string[] sArchivos;
                 sArchivos = Directory.GetFiles(carpetaDocs);
 
-                int filasFinales = 0;
+                //int filasFinales = 0;
+                var dataSet = new DataSet();
+                var dataTable = dataSet.Tables.Add();
 
                 #region Abre hoja excel a trabajar
                 string rutaarchivo = sArchivos[0];
@@ -266,45 +261,97 @@ namespace JM_CFDI
                 {
                     numColumna.Add(numColumn(hoja, lstColumnasSelec[i]));
                 }
-                
-                int colFiltro = numColumn(hoja, palabraFiltro);
-                if (colFiltro != 16385) //si existe la columna para filtrar
+
+                #region Primera forma de obtener datos
+                //int colFiltro = numColumn(hoja, palabraFiltro);
+                //if (colFiltro != 16385) //si existe la columna para filtrar
+                //{
+                //    for (int i = 0; i < filas; i++) // eje y
+                //    {
+                //        bool datoAgregado = false;
+                //        for (int j = 0; j < columnas; j++) // eje x
+                //        {
+                //            if (numColumna[j] != 16385) // si existe la columna de donde obtendra datos
+                //            {
+                //                IRow fila = hoja.GetRow(i);
+                //                string celdaFiltro = fila.GetCell(colFiltro, MissingCellPolicy.RETURN_NULL_AND_BLANK) != null ? fila.GetCell(colFiltro, MissingCellPolicy.RETURN_NULL_AND_BLANK).ToString() : "";
+
+                //                for (int k = 0; k < lstDatosFiltro.Count; k++) // recorre lista de datos que se buscan dentro de la columna a filtrar
+                //                {
+                //                    if (celdaFiltro == lstDatosFiltro[k])
+                //                    {
+                //                        string celda = fila.GetCell(numColumna[j], MissingCellPolicy.RETURN_NULL_AND_BLANK) != null ? fila.GetCell(numColumna[j], MissingCellPolicy.RETURN_NULL_AND_BLANK).ToString() : "";
+
+                //                        cfdi[filasFinales, j] = celda;
+                //                        datoAgregado = true;
+                //                    }
+                //                }
+                //            }
+                //            //else cfdi[i, j] = "";
+                //        }
+                //        if (datoAgregado) filasFinales++;
+                //    }
+                //}
+                #endregion
+
+                #region Segunda forma de obtener datos
+                for (int i = 0; i < lstColumnasSelec.Count; i++)
                 {
-                    for (int i = 0; i < filas; i++) // eje y
+                    dataTable.Columns.Add(lstColumnasSelec[i].ToString());
+                }
+
+                int colFiltro = numColumn(hoja, palabraFiltro);
+                if (colFiltro != 16385)
+                {
+                    for (var f = 0; f < filas; f++)
                     {
-                        bool datoAgregado = false;
-                        for (int j = 0; j < columnas; j++) // eje x
+                        var row = dataTable.Rows.Add();
+                        for (var c = 0; c < columnas; c++)
                         {
-                            if (numColumna[j] != 16385) // si existe la columna de donde obtendra datos
+                            if (numColumna[c] != 16385)
                             {
-                                IRow fila = hoja.GetRow(i);
+                                IRow fila = hoja.GetRow(f);
                                 string celdaFiltro = fila.GetCell(colFiltro, MissingCellPolicy.RETURN_NULL_AND_BLANK) != null ? fila.GetCell(colFiltro, MissingCellPolicy.RETURN_NULL_AND_BLANK).ToString() : "";
+                                
+                                string celda = fila.GetCell(numColumna[c], MissingCellPolicy.RETURN_NULL_AND_BLANK) != null ? fila.GetCell(numColumna[c], MissingCellPolicy.RETURN_NULL_AND_BLANK).ToString() : "";
 
-                                for(int k=0;k< lstDatosFiltro.Count; k++) // recorre lista de datos que se buscan dentro de la columna a filtrar
-                                {
-                                    if (celdaFiltro == lstDatosFiltro[k])
-                                    {
-                                        string celda = fila.GetCell(numColumna[j], MissingCellPolicy.RETURN_NULL_AND_BLANK) != null ? fila.GetCell(numColumna[j], MissingCellPolicy.RETURN_NULL_AND_BLANK).ToString() : "";
-
-                                        cfdi[filasFinales, j] = celda;
-                                        datoAgregado = true;
-                                    }
-                                }
+                                if (filtroExiste(lstDatosFiltro, celdaFiltro)) row[c] = celda;
                             }
-                            //else cfdi[i, j] = "";
                         }
-                        if (datoAgregado) filasFinales++;
                     }
                 }
+                #endregion
 
                 MiExcel.Close();
 
-                //convertir array cfdi - datatable
-                //guardar el datatable en un excel
+                DataTable dtReporte = new DataTable();
+                for (int i = 0; i < lstColumnasSelec.Count; i++)
+                {
+                    dtReporte.Columns.Add(lstColumnasSelec[i].ToString());
+                }
+                
+                for (int fila = 0; fila < dataTable.Rows.Count; fila++)
+                {
+                    bool borrar = false;
+                    for (int columna = 0; columna < lstColumnasSelec.Count; columna++)
+                    {
+                        string dato = dataTable.Rows[fila][lstColumnasSelec[columna]].ToString();
+
+                        if (dato == "" || dato == null) borrar = true;
+                        else borrar = false;
+                    }
+                    if (!borrar)
+                    {
+                        dtReporte.ImportRow(dataTable.Rows[fila]);
+                    }
+                }
 
 
+                //DataView dtV = dataTable.DefaultView;
+                //dtV.Sort = lstColumnasSelec[0].ToString()+ " DESC";
+                //dataTable = dtV.ToTable();
 
-                grd_columnas.DataSource = cfdi;
+                grd_columnas.DataSource = dtReporte;
             }
             else MessageBox.Show("Favor de selcionar por lo menos un elemento de la lista filtro");
         }
@@ -362,6 +409,31 @@ namespace JM_CFDI
             }
             
             return numColumna;
+        }
+
+        private bool filtroExiste(List<string> lstDatosFiltro,string celdaFiltro)
+        {
+            bool filtroExiste = false;
+            for (int k = 0; k < lstDatosFiltro.Count; k++)
+            {
+                if (celdaFiltro == lstDatosFiltro[k]) filtroExiste = true;
+            }
+            return filtroExiste;
+
+            //var iFila = cfdi.GetLongLength(0);
+            //var iCol = cfdi.GetLongLength(1);
+
+            ////Fila
+            //for (var f = 0; f < iFila; f++)
+            //{
+            //    var row = dataTable.Rows.Add();
+            //    //Columna
+            //    for (var c = 0; c < iCol; c++)
+            //    {
+            //        //if (f == 1) dataTable.Columns.Add(cfdi[0, c]);
+            //        row[c] = "a";
+            //    }
+            //}
         }
     }
 }
