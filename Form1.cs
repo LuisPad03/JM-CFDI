@@ -24,6 +24,7 @@ using NPOI.HPSF;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using NPOI.SS.Formula.Functions;
 using System.Collections;
+using Microsoft.VisualBasic.ApplicationServices;
 
 namespace JM_CFDI
 {
@@ -38,10 +39,12 @@ namespace JM_CFDI
         private FileStream file;
         private bool primerHoja = true;
         private List<string> listFiltro = new List<string>();
+        private List<Filtro> listaFiltro = new List<Filtro>();
 
         public Form1()
         {
             InitializeComponent();
+
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -162,6 +165,12 @@ namespace JM_CFDI
                     filtroOK = lstFiltro.Distinct().ToList();
                     lstcbx_descripciones.DataSource = filtroOK;
                     listFiltro = filtroOK;
+
+                    for (int x = 0; x < listFiltro.Count; x++)
+                    {
+                        listaFiltro.Add(new Filtro() { elemento = listFiltro[x], estatus = false });
+                        //lstcbx_descripciones.Items.Add(listFiltro[x]);
+                    }
                 }
 
                 txt_filtro.Enabled = true;
@@ -193,14 +202,10 @@ namespace JM_CFDI
             List<string> filtro = new List<string>();
             if (txt_filtro.Text != "")
             {
-                List<string> list = listFiltro.Where(x => x.Contains(txt_filtro.Text)).ToList();
-                
-
-
+                List<string> list = listFiltro.Where(x => x.ToLower().Contains(txt_filtro.Text.ToLower())).ToList();
                 lstcbx_descripciones.DataSource = list;
             }
             else lstcbx_descripciones.DataSource = listFiltro;
-
         }
 
         private void txt_excel_Click(object sender, EventArgs e)
@@ -700,6 +705,11 @@ namespace JM_CFDI
             //this.Size = new System.Drawing.Size(ancho, alto);
         }
 
+
+
+       
+
+
         private static void GridToExcelByNPOI(DataTable dt, string strExcelFileName, List<string> lstColumnasSelec)
         {
             if (!File.Exists(strExcelFileName))
@@ -788,5 +798,26 @@ namespace JM_CFDI
             }
             else MessageBox.Show("El documento ya existe, favor de cambiar el nombre del archivo");
         }
+
+        private void lstcbx_descripciones_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+
+        }
+    }
+
+
+    public class Filtro
+    {
+        public string elemento { get; set; }
+
+        public bool estatus { get; set; }
+
+
+        //public Filtro(string elemento, bool estatus)
+        //{
+        //    this.elemento = elemento;
+        //    this.estatus = estatus;
+        //}
+
     }
 }

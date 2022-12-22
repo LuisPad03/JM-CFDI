@@ -221,6 +221,7 @@
             this.lstcbx_descripciones.Size = new System.Drawing.Size(188, 202);
             this.lstcbx_descripciones.Sorted = true;
             this.lstcbx_descripciones.TabIndex = 11;
+            this.lstcbx_descripciones.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.lstcbx_descripciones_ItemCheck);
             // 
             // pictureBox2
             // 
