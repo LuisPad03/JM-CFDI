@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "+WJqpsnM+7yCWvCvdKdNaF32LJuku5Mb4Pn4Blonav+lw3cNeK2eLdwnTz9Mjc5uIy4hIKYJHXAKtLAMcNOxqA==",
+  "dgSpecHash": "Hq//8eZ49A8H2wPbE0bWroHRlev0HQlyA97G1MWHKvQldhd78No9r0SAPjfmoGGs9xQPz7sqLefz0ALduUR/Bg==",
   "success": true,
   "projectFilePath": "E:\\Source\\Repos\\JM-CFDI\\JM-CFDI\\JM-CFDI.csproj",
   "expectedPackageFiles": [
@@ -23,7 +23,11 @@
     "C:\\Users\\luisp\\.nuget\\packages\\system.security.cryptography.xml\\6.0.1\\system.security.cryptography.xml.6.0.1.nupkg.sha512",
     "C:\\Users\\luisp\\.nuget\\packages\\system.security.permissions\\6.0.0\\system.security.permissions.6.0.0.nupkg.sha512",
     "C:\\Users\\luisp\\.nuget\\packages\\system.text.encoding.codepages\\6.0.0\\system.text.encoding.codepages.6.0.0.nupkg.sha512",
-    "C:\\Users\\luisp\\.nuget\\packages\\system.windows.extensions\\6.0.0\\system.windows.extensions.6.0.0.nupkg.sha512"
+    "C:\\Users\\luisp\\.nuget\\packages\\system.windows.extensions\\6.0.0\\system.windows.extensions.6.0.0.nupkg.sha512",
+    "C:\\Users\\luisp\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\6.0.28\\microsoft.windowsdesktop.app.ref.6.0.28.nupkg.sha512",
+    "C:\\Users\\luisp\\.nuget\\packages\\microsoft.netcore.app.ref\\6.0.28\\microsoft.netcore.app.ref.6.0.28.nupkg.sha512",
+    "C:\\Users\\luisp\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\6.0.28\\microsoft.aspnetcore.app.ref.6.0.28.nupkg.sha512",
+    "C:\\Users\\luisp\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\6.0.28\\microsoft.netcore.app.host.win-x64.6.0.28.nupkg.sha512"
   ],
   "logs": []
 }

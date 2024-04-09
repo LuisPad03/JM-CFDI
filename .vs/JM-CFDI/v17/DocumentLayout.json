@@ -1,0 +1,52 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "E:\\Source\\Repos\\JM-CFDI\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A06C230D-79EB-45B4-8306-761FFDD3DFA3}|JM-CFDI\\JM-CFDI.csproj|e:\\source\\repos\\jm-cfdi\\jm-cfdi\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{A06C230D-79EB-45B4-8306-761FFDD3DFA3}|JM-CFDI\\JM-CFDI.csproj|solutionrelative:jm-cfdi\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A06C230D-79EB-45B4-8306-761FFDD3DFA3}|JM-CFDI\\JM-CFDI.csproj|e:\\source\\repos\\jm-cfdi\\jm-cfdi\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A06C230D-79EB-45B4-8306-761FFDD3DFA3}|JM-CFDI\\JM-CFDI.csproj|solutionrelative:jm-cfdi\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Form1.cs [Dise\u00F1o]",
+              "DocumentMoniker": "E:\\Source\\Repos\\JM-CFDI\\JM-CFDI\\Form1.cs",
+              "RelativeDocumentMoniker": "JM-CFDI\\Form1.cs",
+              "ToolTip": "E:\\Source\\Repos\\JM-CFDI\\JM-CFDI\\Form1.cs [Dise\u00F1o]",
+              "RelativeToolTip": "JM-CFDI\\Form1.cs [Dise\u00F1o]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2022-12-12T02:14:12.282Z",
+              "EditorCaption": " [Dise\u00F1o]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Form1.cs",
+              "DocumentMoniker": "E:\\Source\\Repos\\JM-CFDI\\JM-CFDI\\Form1.cs",
+              "RelativeDocumentMoniker": "JM-CFDI\\Form1.cs",
+              "ToolTip": "E:\\Source\\Repos\\JM-CFDI\\JM-CFDI\\Form1.cs",
+              "RelativeToolTip": "JM-CFDI\\Form1.cs",
+              "ViewState": "AQIAAAYAAAAAAAAAAADwvygAAAAiAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2022-11-30T23:57:36.554Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("JM-CFDI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1737a4831edd01ec08256fe0d2eda561f9030aa8")]
 [assembly: System.Reflection.AssemblyProductAttribute("JM-CFDI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("JM-CFDI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
